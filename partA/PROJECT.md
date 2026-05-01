@@ -12,10 +12,9 @@
 
 ### MVP feature-ууд
 1. **Task CRUD** — үүсгэх, унших (нэг ба бүгд), засах, устгах
-2. **Due date & priority** — заавал биш талбар, default `medium`
-3. **Label / Tag** — нэг task-д олон tag оноох (many-to-many)
-4. **Search & Filter** — title-аар хайх, status/priority/tag-аар шүүх
-5. **Status workflow** — `todo` → `in_progress` → `done`
+2. **Due date & priority** — заавал биш талбар, default `medium
+3. **Search & Filter** — title-аар хайх, status/priority-аар шүүх
+4. **Status workflow** — `todo` → `in_progress` → `done`
 
 ### Out of scope (хийхгүй)
 - Олон хэрэглэгчийн систем (auth, user account)
