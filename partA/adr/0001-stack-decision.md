@@ -1,8 +1,8 @@
 # ADR-0001: Stack-ийн сонголт — Node.js + Express + SQLite
 
 - **Status:** Accepted
-- **Date:** 2026-05-01
-- **Deciders:** [Таны нэр]
+- **Date:** 2026-05-02
+- **Deciders:** [Лувсанжал]
 - **Context:** Бие даалт 13, Personal Task Tracker
 
 ## Context
