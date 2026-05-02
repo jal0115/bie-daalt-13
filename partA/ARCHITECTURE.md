@@ -75,9 +75,6 @@ sequenceDiagram
 
 ```mermaid
 erDiagram
-    TASKS ||--o{ TASK_TAGS : has
-    TAGS ||--o{ TASK_TAGS : labeled
-
     TASKS {
         int id PK
         string title
@@ -87,16 +84,6 @@ erDiagram
         datetime due_date
         datetime created_at
         datetime updated_at
-    }
-
-    TAGS {
-        int id PK
-        string name UK
-    }
-
-    TASK_TAGS {
-        int task_id FK
-        int tag_id FK
     }
 ```
 
