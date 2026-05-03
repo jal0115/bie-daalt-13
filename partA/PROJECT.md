@@ -12,9 +12,8 @@
 
 ### MVP feature-ууд
 1. **Task CRUD** — үүсгэх, унших (нэг ба бүгд), засах, устгах
-2. **Due date & priority** — заавал биш талбар, default `medium
+2. **Due date & priority** — заавал биш талбар, default `medium`
 3. **Search & Filter** — title-аар хайх, status/priority-аар шүүх
-4. **Status workflow** — `todo` → `in_progress` → `done`
 
 ### Out of scope (хийхгүй)
 - Олон хэрэглэгчийн систем (auth, user account)
@@ -22,6 +21,7 @@
 - Frontend SPA (зөвхөн статик HTML form, optional)
 - File attachment
 - Recurring task
+- Status workflow (`todo` → `in_progress` → `done` шилжилт)
 
 ## Acceptance criteria
 
@@ -35,11 +35,10 @@
 
 ```
 1. POST   /api/tasks          → шинэ task үүсгэх
-2. GET    /api/tasks?status=todo&priority=high
-                              → яаралтай хийх ёстой задачуудаа авах
-3. PATCH  /api/tasks/:id      → status-ыг "in_progress" болгох
-4. PATCH  /api/tasks/:id      → status-ыг "done" болгох
-5. DELETE /api/tasks/:id      → task устгах
+2. GET    /api/tasks?priority=high
+                              → яаралтай задачуудаа авах
+3. PATCH  /api/tasks/:id      → task-ийн title эсвэл due_date засах
+4. DELETE /api/tasks/:id      → task устгах
 ```
 
 ## Хугацаа
