@@ -1,6 +1,7 @@
 ﻿import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import tasksRoutes from './routes/tasks.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error.middleware.js';
 
 const app = express();
@@ -15,8 +16,8 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// API routes (will be added later)
-// app.use('/api/tasks', tasksRoutes);
+// API routes
+app.use('/api/tasks', tasksRoutes);
 
 // Error handlers (must be last)
 app.use(notFoundHandler);
