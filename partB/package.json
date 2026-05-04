@@ -1,0 +1,33 @@
+{
+  "name": "personal-task-tracker",
+  "version": "1.0.0",
+  "description": "Personal Task Tracker REST API - F.CSM311 Bie daalt 13",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "task",
+    "tracker",
+    "rest-api",
+    "express"
+  ],
+  "author": "Лувсанжал",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.9.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
+    "helmet": "^8.1.0",
+    "zod": "^4.4.2"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
+  }
+}
