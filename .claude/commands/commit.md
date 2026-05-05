@@ -1,71 +1,41 @@
----
-description: Generate a Conventional Commits message for staged changes
+﻿---
+description: Generate Conventional Commits message for Personal Task Tracker
 ---
 
 # /commit
 
-`git status` ба `git diff --cached` уншаад Conventional Commits формат бүхий commit message санал болгох.
+`git status` ба `git diff --cached`-ыг уншаад commit message санал болгох.
 
 ## Format
-
-```
-<type>(<scope>): <short summary, ≤72 chars, imperative>
-
-<optional body — юу/яагаад өөрчилснийг тайлбарлах>
-
-<optional footer — BREAKING CHANGE: ..., refs #issue>
-
-Co-Authored-By: Claude <noreply@anthropic.com>   # AI ашиглагдсан commit-д л
-```
-
 ## Type-ууд
 
-| type | Хэрэглээ |
-|------|----------|
-| `feat` | Шинэ feature |
-| `fix` | Bug засвар |
-| `docs` | Зөвхөн документ өөрчлөлт |
-| `test` | Тест нэмэх / засах |
-| `refactor` | Behavior өөрчлөгдөхгүй refactor |
-| `style` | Format, whitespace (logic биш) |
-| `chore` | Build, dep, configuration |
-| `perf` | Performance сайжруулалт |
+| type | Хэрэглээ | Жишээ |
+|------|----------|-------|
+| `feat` | Шинэ feature | feat(tasks): add filter by priority |
+| `fix` | Bug засвар | fix(repository): prevent SQL injection in search |
+| `docs` | Зөвхөн документ | docs(api): add OpenAPI spec |
+| `test` | Test нэмэх | test(tasks): add 10 unit tests for service |
+| `refactor` | Behavior өөрчлөгдөхгүй refactor | refactor(service): extract validation helper |
+| `chore` | Build, dep, config | chore: update express to 4.22.1 |
+| `style` | Format, whitespace (logic биш) | style: fix indentation |
 
-## Scope-ийн жишээ
+## Project-ийн scope-ууд
 
-`tasks`, `tags`, `db`, `api`, `validation`, `tests`, `docs`, `ci`
+`tasks`, `repository`, `service`, `controller`, `routes`, `validation`, `middleware`, `db`, `api`, `partA`, `partB`, `partC`, `tests`, `docs`, `ci`
 
 ## Жишээнүүд
 
-```
-feat(tasks): add filter by status and priority
-
-Query параметр (status, priority) дэмжлээ.
-Validation хийсэн — буруу утгад 400 буцаана.
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-```
-fix(db): prevent SQL injection in search query
-
-`title LIKE` параметрийг prepared statement-д шилжүүллээ.
-Өмнө нь raw string concat байсан.
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-```
-test(tasks.service): cover edge cases for createTask
-
-Empty title, very long title (1001 chars), special chars-ийг
-тестлэв. 5 шинэ тест нэмэгдэв.
-```
+### Шинэ feature нэмсэн бол:
+test(tasks): add 10 unit tests for service layer with mocked repository
+Service-ийн бүх 5 method-ыг тестлэв.
+Repository-г jest.unstable_mockModule-аар mock хийсэн.
+Edge case: NotFoundError, statusCode 404.
+Co-Authored-By: Claude noreply@anthropic.com
 
 ## Дүрэм
 
-- AI ашигласан commit-д **заавал** `Co-Authored-By:` нэм
-- 100% хүний бичсэн commit-д Co-Authored-By **бүү бич**
-- Subject line imperative voice ("add" биш "added", "adds" биш)
-- 72 char-аас давсан тохиолдолд body-д тайлбар нэм
-- Bullet point-уудыг body-д ашигла, олон асуудлыг нэг commit-д бүү багтаа
+- AI ашиглагдсан бол **заавал** `Co-Authored-By:` нэмэх
+- Subject line **imperative** voice ("add" биш "added")
+- 72 char-аас давсан тохиолдолд body нэмэх
+- Олон асуудлыг **нэг commit-д** бүү багтаа
+- Bullet point-уудыг body-д ашигла
