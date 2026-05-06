@@ -1,6 +1,6 @@
 AI Usage Report: Personal Task Tracker Development
 Огноо: 2026 оны 5-р сарын 6
-Хөгжүүлэгч: Лувсанжал
+Хөгжүүлэгч: [Лувсанжал]
 Төслийн нэр: Personal Task Tracker (Node.js + Express + SQLite)
 1. Оршил (Introduction)
 Энэхүү тайлан нь "Бие даалт 13"-ын хүрээнд AI (Claude Code) хэрэгслийг хөгжүүлэлтийн явцад хэрхэн ашигласан туршлагаа задлан шинжлэх зорилготой.
