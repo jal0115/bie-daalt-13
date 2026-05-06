@@ -93,7 +93,10 @@ npm run test:coverage   # Coverage report
 
 - Custom slash commands `.claude/commands/`-д
 - Build-ийн чухал session-ууд `ai-sessions/`-д
-- Дэлгэрэнгүйг `partC/AI-USAGE-REPORT.md`-аас үзнэ үү
+- Дэлгэрэнгүйг [docs/REPORT.md](../docs/REPORT.md) -ээс үзнэ үү.
+
+## Зохиогч
+Лувсанжал — F.CSM311, 2026
 
 ## Лиценз
 
