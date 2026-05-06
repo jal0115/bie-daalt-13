@@ -48,3 +48,9 @@ npm test
 ## Бүтэц
 
 `partA/ARCHITECTURE.md`-ийг үзнэ үү.
+
+## Documentation
+- [AI Usage Report](./docs/REPORT.md)
+- [Architecture Decision Records](./docs/ADR-0001.md)
+- [AI Session Logs](./docs/sessions/ai-log-01.md)
+
