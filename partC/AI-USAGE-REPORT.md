@@ -1,184 +1,219 @@
-# AI Usage Report — Personal Task Tracker
+﻿# AI Usage Report - Personal Task Tracker
 
-> **Зорилго:** Энэ бие даалтыг хийх явцад AI-тай (Claude Code) хамтран ажилласан туршлагаа задлан шинжлэх. Курсийн "verify, don't trust" зарчмын practical илрэл.
+**Developer:** Luvsanjal
+**Date:** 2026-05-06
+**Project:** Personal Task Tracker (Node.js + Express + SQLite)
+**AI Tool:** Claude (Anthropic)
 
-> **Чухал:** Энэ файлд бичсэн зүйл бүхэн миний өөрийн ажигласан, шалгасан туршлага. AI-аар ҮҮСГҮҮЛЭЭГҮЙ. Жишээ кодуудыг өөрийн repo-оос хуулсан.
+> Энэ файлд бичсэн зүйл бүхэн миний өөрийн ажигласан, шалгасан туршлага. Build хийх явцад тэмдэглэж аваад дараа нь Report болгож нэгтгэв.
 
 ---
 
 ## 1. Юуг AI хийсэн, юуг өөрөө хийсэн?
 
-### А хэсэгт (Plan)
+### А хэсэг (Plan)
 
 **AI хийсэн:**
-- 3 stack-ийн дэлгэрэнгүй харьцуулалтын **бие** (text). Жишээ нь "Express vs FastAPI vs Go Chi"-н learning curve, ecosystem-ийн талаархи өгүүлбэрүүд.
-- Mermaid diagram-ийн **анхны draft**. Layer хоорондын чиглэл, sequence diagram-ийн `alt` блок syntax.
-- ADR-ийн **формат** (status/context/decision/consequences дөрвөн хэсэгтэй template).
+- 3 stack-ийн (Node.js, Python FastAPI, Go) харьцуулалтын бичвэрийн анхны draft
+- ARCHITECTURE.md дотор Mermaid diagram-ийн анхны загвар (layered flow, sequence diagram)
+- PROJECT.md, STACK-COMPARISON.md template
 
 **Өөрөө хийсэн:**
-- Stack-ийн эцсийн сонголт (Node.js)-г хийх. AI олон хувилбарыг тайлбарласан ч "хичээлд тохирсон" гэдэг шалгуурыг би л өөрөө тогтоосон.
-- ARCHITECTURE.md дотор data flow-г Mermaid sequence diagram болгож **ялгасан** — анхны Claude хариу нь зөвхөн flowchart байсан.
-- CLAUDE.md дээрх "no-go zones" хэсэг (ADR, self-evaluation АІ-аар бүү бичүүл) — энэ бол курсийн зөвлөмжөөс гарсан минийх.
-- PROJECT.md-ийн scope-ийг хатуу тогтоосон (auth, notification, recurring task — out-of-scope гэж шийдвэрлэв).
+- Эцсийн stack сонголт: Node.js + Express + SQLite (хичээлийн стектэй уялдсан)
+- Scope-ыг 5 feature-ээс 4-т багасгах шийдвэр (tag many-to-many цаг шаардсан)
+- Дараа нь deadline шахмал учир 4-ээс 3 feature болгож хасах (status workflow хасав)
+- ADR-001-ийг өөрөө уншиж, "яагаад Go биш Node.js" гэдгийг тайлбарлаж сурсан
+- ARCHITECTURE.md уншсаны дараа Layered Architecture-ийн 4 layer-ийг (Routes Controller Service Repository) ойлгож, Separation of Concerns зарчмыг сурсан
 
-### Б хэсэгт (Build)
+### Б хэсэг (Build)
 
 **AI хийсэн:**
-- Express boilerplate (`app.js`, server entry, error middleware) — анхны draft.
-- Zod validation schema-ийн загвар.
-- `better-sqlite3` миграц SQL-ийн анхны хувилбар.
-- Test edge case-уудын саналууд (empty input, very long string, SQL special chars).
+- Express app.js, server.js skeleton
+- better-sqlite3-ийн connection файл (db/index.js)
+- migrations.sql дотор tasks хүснэгтийн CHECK constraint, index
+- zod validation schema (4 schema)
+- Repository layer-ийн prepared statements
+- Service layer-ийн NotFoundError class
+- Controller бүгд (try/catch + next(err) pattern)
+- Routes mapping
+- Error middleware (ZodError + custom statusCode)
+- 10 unit test (jest.unstable_mockModule pattern)
+- OpenAPI 3.0 yaml специfication
 
 **Өөрөө хийсэн:**
-- Service layer-ийн business rule — жишээ нь `done` болсон task-ыг буцаагаад `todo` болгож болохгүй гэдгийг **би өөрөө шийдсэн**, AI-д энэ rule байхгүй байсан.
-- DB schema дээр `task_tags` many-to-many хүснэгтийг **би өөрөө сонгосон** — AI анхандаа `tags TEXT` (comma-separated) санал болгосон, гэвч normalization-ийн үүднээс татгалзав.
-- Тест бүрийг өөрөө уншиж "энэ юу шалгаж байна вэ?" гэж тайлбарлаж чадахаар болгосон. AI-ийн санал болгосон 13 тестээс **3-ийг устгасан** — duplicate байсан.
-- Conventional Commits-ийн дагуу commit бичсэн.
+- npm install хийсэн ба гарсан хувилбарын асуудлыг (Express 5 vs 4) илрүүлж зассан
+- Encoding asuudal илрүүлж засах (Notepad ANSI vs UTF-8)
+- API endpoint бүрийг Invoke-RestMethod-аар тестлэсэн (POST, GET, PATCH, DELETE, validation, 404)
+- Git commit бүрийг өөрөө хийж Conventional Commits format-аар бичсэн
+- 5 өөр өдөрт жигдлэн ажилласан (Day 1-5)
 
 ---
 
-## 2. Hallucination 2+ жишээ
+## 2. Hallucination ба алдааны жишээ
 
-### Жишээ 1: байхгүй npm package санал болгов
+### Жишээ 1: Express хувилбарын зөрчил
 
-**Контекст:** Rate limiting middleware хайж байсан.
+**Контекст:** ARCHITECTURE.md, ADR-001 хоёрт Express 4 сонгох гэж бичсэн. npm install express ажиллуулсан.
 
-AI хариулт нь `npm install express-rate-limiter` гэж бичсэн. Гэвч жинхэнэ нэр нь `express-rate-limit` (limit-er биш). `npm install` ажиллуулахад `npm ERR! 404 Not Found` гарсан.
+**Болсон зүйл:** package.json дотор "express": "^5.2.1" гэж бичигдсэн. npm нь default-аар хамгийн шинэ хувилбарыг (Express 5) суулгасан.
 
-**Хэрхэн олсон:** npm install ажиллуулсан үед алдаа гарсан. Дараа нь npmjs.com дээр хайж зөв нэрийг олов.
+**Учир:** Express 5 нь 2024 онд stable болсон шинэхэн хувилбар. Middleware compatibility бүрэн шалгагдаагүй. AI документад "Express 4" гэж бичсэн ч install command-аар тодорхой хувилбар хэлээгүй.
 
-**Сургамж:** Package нэрийг үргэлж шалгах. `npm view <name>` командаар verify хийнэ.
+**Хэрхэн илэрсэн:** package.json-ыг шалгахдаа ^5.2.1 гэж байгааг харсан. ADR-001 уншсан учир "5 биш 4 байх ёстой" гэж мэдсэн.
 
-```bash
-# Алдаа
-npm install express-rate-limiter   # ❌ 404
-# Зөв
-npm install express-rate-limit     # ✅
-```
+**Засвар:**
+- npm uninstall express
+- npm install express@4
+- Эцсийн хувилбар: 4.22.1
 
-### Жишээ 2: Express 4-д байхгүй method ашигласан
+**Сургамж:** Хувилбар сонгохдоо package@version гэж тодорхой бичих ёстой. Документад заасан хувилбартай install command нь таарч байх ёстой.
 
-**Контекст:** Async route handler-ийг дэмжих.
+### Жишээ 2: Notepad encoding asuudal (2 удаа давтагдсан)
 
-AI код нь `app.useAsync(...)` гэдэг method ашиглаж байсан. Гэвч Express 4-д `useAsync` гэдэг method **огт байхгүй**. Express 5-аас гарах гэж яригдсан санал ч stable биш.
+**Контекст:** package.json-д "author" талбарт өөрийн нэрийг Кириллээр бичих. Дараа нь db/index.js дотор Кирилл comment бичих.
 
-**Хэрхэн олсон:** код run хийхэд `TypeError: app.useAsync is not a function`. Express docs-ийг шалгахад `useAsync` уг нь **нийтлэгдээгүй**.
+**Болсон зүйл:**
+- "author": "Лувсанжал" болж "author": "Ð›ÑƒÐ²ÑÐ°Ð½Ð¶Ð°Ð»"
+- // Database файлын зам болж // Database Ñ„Ð°Ð¹Ð»Ñ‹Ð½ Ð·Ð°Ð¼
 
-**Зассан арга:** энгийн pattern ашиглав — async handler-уудаа try/catch-аар боож, error middleware рүү `next(err)` явуулах:
+**Учир:** Windows Notepad нь default-аар ANSI encoding ашигладаг (UTF-8 биш). Кирилл бичсэн файлыг хадгалахад тарж байсан.
 
-```js
-const asyncHandler = (fn) => (req, res, next) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
+**Хэрхэн илэрсэн:** Get-Content -Encoding UTF8 командаар файлын агуулгыг шалгасан үед "Ð›ÑƒÐ²ÑÐ°Ð½Ð¶Ð°Ð»" гэж байсан.
 
-router.post('/tasks', asyncHandler(controller.create));
-```
+**Засвар:** PowerShell-ийн Set-Content -Encoding UTF8 параметр ашиглах. Эсвэл код доторх comment-уудыг англиар бичих стандартыг дагах.
 
-**Сургамж:** AI шинэхэн feature ярихад "энэ stable юу?" гэж follow-up асуух.
+**Сургамж:** Code-ын стандарт comment англиар байх нь зөв (олон улсын стандарт). Encoding asuudal-аас зайлсхийнэ. Notepad биш VS Code эсвэл PowerShell heredoc ашиглах.
 
-### Жишээ 3 (нэмэлт): Mermaid syntax буруу
+### Жишээ 3: PowerShell-д curl quote escaping
 
-ER diagram-д AI `||--|{` гэдэг харьцаа гэв. Mermaid render хийхэд алдаа гарсан. Зөв syntax нь `||--o{` (one-to-many) байсан. Mermaid live editor-т туршив.
+**Контекст:** Эхний task үүсгэхэд curl ашигласан: curl.exe -X POST -H "Content-Type: application/json" -d single-quote бүхий JSON.
 
----
+**Болсон зүйл:** Server-ээс "Unterminated string in JSON at position 14" алдаа буцаасан.
 
-## 3. Security / license-ийн анхаарал
+**Учир:** PowerShell нь single quote дотор backslash-quote-ыг literal гэж үздэг. Bash-ээс өөр. JSON body зөв escape хийгдээгүй учир server-т буруу string ирсэн.
 
-### Жишээ: SQL injection эрсдэлтэй код
+**Хэрхэн илэрсэн:** API server алдаа буцаасан учир. Error middleware "Unterminated string in JSON" гэж тодорхой хариу буцаасан нь шалгахад тус болсон.
 
-**Контекст:** Search feature implement хийх үед.
+**Засвар:** PowerShell-ийн native command Invoke-RestMethod ашиглах. ConvertTo-Json-аар hash table-аас JSON болгох.
 
-AI санал болгосон код:
-
-```js
-// AI-ийн САНАЛ — буруу
-function searchTasks(query) {
-  return db.prepare(`SELECT * FROM tasks WHERE title LIKE '%${query}%'`).all();
-}
-```
-
-Энэ нь template literal-ийг `prepare()` дотор шууд орхисон — **prepared statement зөв ашиглагдаагүй**. `query = "'; DROP TABLE tasks; --"` гэх мэт оруулга өгөхөд injection эрсдэлтэй (better-sqlite3 нь `prepare` дотор raw SQL-ийг compile хийдэг).
-
-**Зассан хувилбар:**
-
-```js
-// ЗӨВ — prepared statement зөв ашигласан
-function searchTasks(query) {
-  return db
-    .prepare('SELECT * FROM tasks WHERE title LIKE ?')
-    .all(`%${query}%`);
-}
-```
-
-`?` placeholder-ийг ашиглаж параметрийг тусад нь `.all(...)`-руу дамжуулсан.
-
-**Хэрхэн илэрсэн:** `/security` slash command ажиллуулахад AI өөрөө буруугаа илрүүлсэн. Үүнийг бас `/review` command баталсан.
-
-**Сургамж:** AI-ийн анхны код нь "ажиллах" ч "аюулгүй" эсэх нь өөр асуулт. SQL involve хийсэн бүх PR-д static check заавал.
-
-### License-ийн анхаарал
-
-`package.json` дотор хамаарал бүхий пакетуудыг шалгахад нэг dev-only пакет (faker.js fork) нь **AGPL** license-тэй байсан. AI санал болгосон fork байсан. Production биш ч ирээдүйн confusion-аас зайлсхийж `@faker-js/faker` (MIT) рүү шилжүүлсэн.
+**Сургамж:** Платформ бүрд arг өөр. Bash дээр curl ашиглахад зөв ч PowerShell-д Invoke-RestMethod илүү найдвартай.
 
 ---
 
-## 4. Юуг AI-аар хурдан хийсэн? (production benefit)
+## 3. Security ба license-ийн анхаарал
 
-1. **Boilerplate setup** — `package.json`, `eslint.config.js`, `jest.config.js`, эх Express app — өмнө 30+ минут авдаг ажил 3-5 минут болсон.
-2. **Test edge case-уудыг бодож олох** — миний бичих байсан тест 5-7 байх байсан, AI санал болгосноор 12+ болсон. `null`, very long string, Unicode emoji зэргийг өөрөө хариуцаагүй ч зайлшгүй чухал болохыг ойлгов.
-3. **Mermaid diagram бичих** — гар аргаар ASCII зурах оронд syntax суралцах боломж олдсон.
-4. **OpenAPI yaml** — туршлагагүй format-ийг AI үлгэрээр заасан.
-5. **Conventional Commits-ийн төрлүүдийг санахад** — `chore`, `perf`-ийн ялгаа гэх мэт.
+### SQL injection эрсдэл - Repository layer-д
 
-Тооцоолоход boilerplate + тестийн санаа гэхэд **~6-8 цаг** хэмнэгдсэн.
+**Контекст:** Search endpoint бичих үед AI санал болгосон хувилбар нь template literal дотор user input шууд оруулсан query байсан.
+
+**Эрсдэл:** Template literal-аар user input шууд SQL-д орох нь SQL injection-д өртөмтгий. Жишээ нь хортой хэрэглэгч "; DROP TABLE tasks; --" гэх мэт оруулга өгч DB сүйтгэх боломжтой.
+
+**Засвар:** Prepared statement-ийг зөв ашиглах - ? placeholder + параметрийг тусад нь .all() методэд дамжуулах. Энэ хэлбэрээр SQL engine query-ийг нэг удаа compile хийгээд параметрийг "data only" гэж үздэг. Injection боломжгүй.
+
+**Хэрхэн илэрсэн:** /security болон /review slash command-уудыг ашиглан Repository layer-ийг шалгасан.
+
+### npm deprecation warnings
+
+**Контекст:** npm install express better-sqlite3 zod helmet cors ажиллуулсны дараа 4 warning гарсан:
+- prebuild-install@7.1.3 (no longer maintained)
+- inflight@1.0.6 (memory leak risk)
+- glob@7.2.3 (security vulnerabilities)
+- glob@10.5.0
+
+**Эрсдэл:** Эдгээр нь dependency-уудын dependency (transitive). Шууд засах боломжгүй - гол пакетуудын maintainer-ууд update хийх ёстой.
+
+**Шийдвэр:** Audit-аас 0 critical vulnerability гарсан учир үргэлжлүүлсэн. Production deployment-д нэмэлт audit хэрэгтэй.
+
+### .gitignore-ийн template алдаа
+
+**Контекст:** Template-аар үүссэн .gitignore-д package-lock.json ignore хийгдсэн байсан.
+
+**Эрсдэл:** Бусад developer (эсвэл багш) repo-ыг clone хийгээд npm install ажиллуулахад өөр хувилбарын package суух магадтай. Dependency reproducibility алдагдана.
+
+**Засвар:** .gitignore-аас package-lock.json хасав. Одоо git-д track хийгдэж байгаа.
 
 ---
 
-## 5. Юуг AI-аар удаан хийсэн? (бэрхшээл)
+## 4. AI-аар хурдан хийсэн зүйлс (Productivity benefit)
 
-1. **Бизнес логик** — "done" → "todo" буцаах эсэх гэх мэт business rule-ийг AI санал болгож чадахгүй. Олон удаа "энэ хэрэглэгчийн нөхцөл байдал" гэж тайлбарлах хэрэгтэй болсон.
-2. **CLAUDE.md-ийг урт болгохоор chat-ийн чанар буурсан** — эхлээд бүх зөвлөмжийг CLAUDE.md-д шигтгэв. 400 мөр болоход AI зөвлөмжийг алгасах нь олшроод. Эцэст нь 200 мөр хүртэл багасгасан, илүү тодорхой болсон.
-3. **AI overconfidence** — асуудал шийдсэн гэж сангаас өмнө "Done!" гэж хариулдаг. Тестээр шалгахад асуудал байсаар л байсан. **Үргэлж test ажиллуулах ёстой** гэдэг сургамж авлаа.
-4. **Hallucination зас debug** — Express `useAsync` асуудлыг шалгахад 30 минут зарцуулсан (мэдэхгүй сууж явсан). Final solution нь маш энгийн (asyncHandler wrapper).
-5. **Контекст алдалт** — урт session-ы дунд хэсэгт AI өмнөх шийдвэрээ "мартсан" мэт байх. Жишээ нь "ESM ашиглана" гэж эхэнд тохирсон ч сүүлд CommonJS-ийн `require()` бичсэн. CLAUDE.md-д convention тодорхой бичсэн нь үүнийг ихэвчлэн нөхсөн.
+1. Express + SQLite skeleton setup - npm init, dependencies, folder structure, эхний app.js болон server.js: дунджаар 2-3 цагийн ажил 30 минут хүрсэн.
+
+2. 5 файлын layered architecture (validation, repository, service, controller, routes) - AI боломжтой жишээгүйгээр санах боломжгүй pattern. 2 цаг хэмнэгдсэн.
+
+3. Mermaid diagram syntax - flowchart, sequenceDiagram, erDiagram. Гар аргаар ASCII зурахаас илүү цэвэр, мэргэжлийн дүр.
+
+4. OpenAPI 3.0 yaml - 253 мөр. Үлгэр өгөөгүй бол яаж эхлэхээ мэдэхгүй format. AI үлгэрээр заасан.
+
+5. Zod schema-ууд - 4 schema (create, update, query, idParam). Validation logic нэг газар төвлөрсөн.
+
+6. Test edge cases санах - empty input, very long string, special chars, boundary numbers. AI санал болгосноор тест 10 хүрсэн.
+
+7. Conventional Commits format - feat/fix/docs/test/refactor/chore prefix-ийн ялгаа. Олон commit message-ийг хурдан зөв format-аар бичсэн.
+
+Нийт хэмнэгдсэн цаг: 6-8 цаг минимум.
 
 ---
 
-## 6. Skill atrophy — миний эрсдэлтэй харьцсан байдал
+## 5. AI-аар удаан хийсэн зүйлс (Бэрхшээл)
 
-Энэ нь хамгийн чухал асуулт гэж би үзэж байна. AI боломжтой бол яаж бид хувийн ур чадварыг хадгалах вэ?
+1. Express 5 vs 4 асуудал - AI документад "Express 4" гэж бичсэн ч install command тодорхойгүй байсан учир Express 5 суусан. Илрүүлж засах 30 минут алдсан.
 
-**Миний хэрэгжүүлсэн арга хэмжээнүүд:**
+2. Notepad encoding asuudal - 2 удаа давтагдсан. Эхэндээ "юу болсон" гэдгийг ойлгоход цаг алдсан. AI-аас "ANSI vs UTF-8" гэдгийг сурахад нэмэлт 20 минут.
 
-### "AI-гүй" цаг
-14 хоногийн **3 өдөр** (4, 7, 11 дэх) AI бүрэн хаасан. Эдгээр өдрүүдэд:
-- Зөвхөн docs (Express, Jest) уншсан
-- Стек overflow / GitHub-аар асуудлаа шийдсэн
-- "Энэ кодыг яагаад ийм хэлбэрээр бичсэн вэ?" гэдэг асуултанд өөрөө хариулдаг байсан
+3. PowerShell vs Bash command - Linux/Mac-д ашиглах ёстой command-ыг AI санал болгох тал бий. Windows-д ажиллахгүйг үе шатлан илрүүлэх. 15 минут.
 
-### Code review дадал
-AI үүсгэсэн файл бүрийг `git diff` хийсний дараа line-by-line үзэн **тайлбарлаж** чадаж байна уу гэдгээ шалгасан. Чадахгүй бол commit бүү хий гэж өөртөө дүрэм тогтоосон.
+4. Бизнес шийдвэр - "Tag-ыг хийх үү?", "Status workflow хийх үү?" гэх мэт scope шийдвэрийг AI санал болгож чадахгүй. Time constraint-ыг өөрөө шийдэх ёстой.
 
-### Test өөрөө бичих
-AI-ийн санал болгосон 12 тестээс **2-ыг** өөрөө бүрэн шинээр бичсэн (`tasks.repository.test.js` дотор). Энэ нь better-sqlite3 API-ийг ойлгоход тусалсан.
+5. Контекст алдагдах - Урт session-д AI өмнөх шийдвэрээ "мартсан" мэт байх тал бий. CLAUDE.md дотор convention тодорхой бичсэн нь нөхөв.
 
-### "Эсрэг асуулт" дадал
-AI санал гарахад "энэ зөв уу?" гэхээс илүү "ямар буруу хувилбарууд бий байж болох вэ?" гэж асуудаг болсон. Энэ нь нэг удаа Express 4 vs 5 асуудал илрүүлэхэд үр дүнтэй байсан.
+---
 
-### Замын дунд тэмдэглэл
-Шинэ зүйл сурах болгондоо `~/learning-notes.md` файлд тэмдэглэсэн. AI байхгүйд эргэн харах хэрэглэгдэхүүн.
+## 6. Skill atrophy эрсдэлийг хэрхэн зохицуулсан
 
-**Үнэн хариу:** Skill atrophy эрсдэл бий. Жишээлбэл, regular expression-ийг AI-аар бичүүлдэг болсон. Шалгалтын үед өөрөө бичиж чадах эсэх — эргэлзэлтэй. Үүнийг ирээдүйн хичээл дээр нэмэлт цаг гаргаж нөхөх төлөвлөгөөтэй.
+AI боломжтой бол хувийн ур чадвар муудах эрсдэлтэй. Миний хэрэгжүүлсэн арга хэмжээ:
+
+### Кодоо тайлбарлах дадал
+AI үүсгэсэн файл бүрийг уншиж, "энэ юу хийдэг вэ?" гэж өөрөөсөө асуудаг байлаа. Жишээ нь:
+- ARCHITECTURE.md уншсаны дараа layered architecture-ийг өөрөөрөө тайлбарлаж сурсан: Routes Controller Service Repository DB.
+- Repository layer-ийн prepared statements-ийг яагаад хэрэгтэйг тайлбарлаж сурсан (SQL injection-аас хамгаалал, performance).
+- Service layer ба Controller layer-ийн ялгааг ойлгож сурсан.
+
+### Шалгалтын дасгал
+Build-ийн явцад AI надаас асуултууд асуудаг байсан:
+- "Хэдэн layer бий?"
+- "Яагаад Go биш Node.js сонгосон вэ?"
+- "Express 5 биш 4 яагаад вэ?"
+- "SQL injection гэж юу вэ, яаж хамгаалсан?"
+
+Эдгээрт өөрөөрөө хариулж сурсан нь шалгалтын бэлтгэл болсон.
+
+### Commit бүрд "тайлбарлах хорго"
+Commit хийхийн өмнө 2-3 минут зарцуулж "энэ commit-д юу өөрчилсөн вэ?" гэж тэмдэглэдэг байсан. Conventional Commits format нь тус болсон.
+
+### Бодит туршилт хийх
+API endpoint бүрийг Invoke-RestMethod-аар жинхэнэ тестэлсэн:
+- POST: task үүсгэгдэв (id=3, id=4)
+- PATCH: priority high low шилжсэн
+- GET filter: priority=high ажилласан
+- Validation: priority=urgent 400 алдаа
+- 404: GET /api/tasks/999 "Task with id 999 not found"
+
+**Үнэн хариу:** Skill atrophy-ийн эрсдэл бий. Жишээ нь regular expression, encoding subtleties зэргийг AI-аар бичүүлдэг болсон. Ирээдүйд эдгээрийг гар аргаар бичих дасгал хийх төлөвлөгөөтэй. Гэхдээ архитектурын ойлголт, layered design, SQL safety зэргийг бат хадгалж чадсан гэж итгэдэг.
 
 ---
 
 ## Дүгнэлт
 
-AI бол **үржүүлэгч** (multiplier) — байгаа ур чадварыг үржүүлдэг, шинэ ур чадвар бэлэглэдэггүй. Боловсорсон судлагдахуунгүй "AI бичсэн нь ажиллана" гэвэл өөрийн бичсэн "spaghetti code" болохоос дор болно (учир нь ойлгохгүй байна).
+AI бол multiplier - байгаа ур чадварыг үржүүлдэг боловч мэдлэгийг орлодоггүй. Энэ бие даалт нь надад "Verify, don't trust" зарчмыг практикт сурахад тусалсан.
 
-Энэ бие даалт надад заасан гол зүйл бол:
-1. **AI хэлсэн бүх зүйлийг шалга** (verify, don't trust)
-2. **Mental model-оо хадгал** — кодоо тайлбарлаж чадах ёстой
-3. **CLAUDE.md, slash command-ууд бол нэмэлт хүчин чармайлт боловч ROI өндөр**
-4. **AI session log хадгалах нь reflective practice-ийн төлөө чухал**
+**Хамгийн чухал сургамж:**
+1. AI хариу бүрийг уншиж шалгах - Express 5 vs 4 жишээ үүнийг харуулсан
+2. Cross-platform difference мэдэх - PowerShell vs Bash
+3. Дэвшилтэт алхмууд хийх - encoding, dependency version, security шалгалт
+4. Бид кодлогчийн "бичих" үүргээс "дизайн, верификаци" руу шилжиж байна - энэ нь ирээдүйн ажлын чиглэл
 
-Үг тоо: ~1700+
+Энэ туршлагаар би одоо AI-тай ажиллахад илүү шүүмжлэлтэй, асууж сурсан developer болж байна.
+
+- Лувсанжал, 2026-05-06
+
+Үг тоо: 1600+
